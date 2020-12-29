@@ -1,0 +1,120 @@
+@import "./assets/common.scss";
+
+#app {
+  // TODO: custom cursor
+  //cursor: url("./assets/宝鐘マリンマウスカーソル/宝鐘マリン_06[テキスト選択].ani"), default;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  .logo {
+    width: calc(var(--spacing-med) * 2);
+    height: calc(var(--spacing-med) * 2);
+  }
+  .circleFrame {
+    border-radius: 50%;
+  }
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    top: 0px;
+    background: var(--marine-color);
+    z-index: 100;
+    .contact {
+      display: flex;
+      a {
+        padding: var(--spacing-low);
+        display: flex;
+        &:hover {
+          background: var(--marine-color-light);
+        }
+      }
+    }
+    .lang-selector {
+      &>div {
+        cursor: pointer;
+        &:first-child {
+          padding: var(--spacing-med);
+          height: calc(100% - var(--spacing-med) * 2);
+        }
+        &:last-child {
+          right: 0;
+          display: none;
+          position: absolute;
+        }
+      }
+      &:hover {
+        &>div:last-child {
+          display: block;
+        }
+      }
+      .lang {
+        padding: var(--spacing-med);
+        right: 0;
+        background: var(--marine-color);
+        &:hover {
+          cursor: pointer;
+          background: var(--marine-color-light);
+        }
+      }
+    }
+  }
+  .controller {
+    margin: var(--spacing-low) 0;
+    display: flex;
+    > div {
+      display: flex;
+      margin: auto;
+      > * {
+        margin: auto 10px;
+      }
+    }
+  }
+  .group {
+    .group-header {
+      display: flex;
+      background: var(--marine-color);
+      padding: 5px;
+      margin-bottom: 5px;
+      h4 {
+        width: 100%;
+        margin: auto;
+      }
+      .btn {
+        width: 20%;
+        max-width: 180px;
+      }
+    }
+  }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    width: -webkit-fill-available;
+    > * {
+      margin: auto 0;
+    }
+  }
+}
+@media (max-width: 768px) {
+  #app {
+    .controller {
+      > div {
+        display: block;
+        > * {
+          margin: 10px 10px;
+        }
+      }
+    }
+    .group {
+      .group-header {
+        .btn {
+          width: initial;
+          max-width: initial;
+        }
+      }
+    }
+  }
+}
