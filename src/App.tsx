@@ -5,12 +5,16 @@ import {getConfig, setConfig} from './utils/player'
 import MarineBtnData from './utils/data'
 import './App.scss';
 import React, {useCallback, useEffect, useState} from 'react';
+import background from './assets/background.jpg'
 import youtube from './assets/youtube.png';
 import twitter from './assets/twitter.png';
-import aqua_ch from './assets/aqua_ch.jpg';
-import fubuki_ch from './assets/fubuki_ch.jpg';
-import pekora_ch from './assets/pekora_ch.jpg';
+import aqua_ch from './assets/channels/aqua_ch.jpg';
+import fubuki_ch from './assets/channels/fubuki_ch.jpg';
+import pekora_ch from './assets/channels/pekora_ch.jpg';
 import github from './assets/github.png';
+import MarineGallery from "./components/MarineGallery";
+// @ts-ignore
+import original_song from './assets/【original】Ahoy - 我ら宝鐘海賊団☆【ホロライブ-宝鐘マリン】.mp4';
 
 
 // TODO: Fix playing functions
@@ -32,7 +36,9 @@ function App() {
       setState(prevState => {
           return {
               ...prevState,
-              siteLang: localStorage.getItem('lang') ? localStorage.getItem('lang') : 'en'
+              siteLang: localStorage.getItem('lang') ? localStorage.getItem('lang') : 'en',
+              loop: localStorage.getItem('loop') ? true : false,
+              overlap: localStorage.getItem('overlap') ? true : false
           }
       })
   }, [])
@@ -100,7 +106,7 @@ function App() {
     });
   }, [state.siteLang]);
 
-  const setLoop = useCallback(() => {
+  const toggleLoop = useCallback(() => {
       setConfig();
       setState((prevState => {
           return {
@@ -110,7 +116,7 @@ function App() {
       }))
   }, [state.loop]);
 
-    const setOverlap = useCallback(() => {
+    const toggleOverlap = useCallback(() => {
         setConfig();
         setState((prevState => {
             return {
@@ -121,20 +127,17 @@ function App() {
     }, [state.loop]);
 
   const toggleBgm = useCallback(() => {
-    // if (state.playingBgm) {
-    //   bgm.onended = null;
-    //   bgm.pause();
-    //   console.log('Bruh')
-    // }
-    // else {
-    //   bgm.volume = getConfig().bgmVolume;
-    //   bgm.play();
-    //   bgm.onended = () => {
-    //     if (state.playingBgm) bgm.play();
-    //   }
-    // }
     setState((prevState) => {
-        if (prevState.playingBgm) {
+        return {
+            ...prevState,
+            playingBgm: !prevState.playingBgm
+        }
+    })
+  }, [state.playingBgm])
+
+    useEffect(() => {
+        console.log('bgm')
+        if (!state.playingBgm) {
             bgm.onended = null;
             bgm.pause();
             console.log('Bruh')
@@ -143,15 +146,10 @@ function App() {
             bgm.volume = getConfig().bgmVolume;
             bgm.play();
             bgm.onended = () => {
-                if (prevState.playingBgm) bgm.play();
+                if (state.playingBgm) bgm.play()
             }
         }
-        return {
-            ...prevState,
-            playingBgm: !prevState.playingBgm
-        }
-    })
-  }, [bgm, state.playingBgm])
+    }, [bgm, state.playingBgm])
 
   const bgmVolumeChange = () => {
     const value = Number((document.getElementById('bgmVolume') as HTMLInputElement).value) / 100;
@@ -273,7 +271,7 @@ function App() {
                     checked={state.loop}
                     disabled={state.playingRandom}
                     name="loop" id="loop"
-                    onClick={setLoop}
+                    onChange={toggleLoop}
                 />
                 <span className="checkmark"></span>
               </label>
@@ -286,7 +284,7 @@ function App() {
                     checked={state.overlap}
                     disabled={state.playingRandom}
                     name="overlap" id="overlap"
-                    onClick={setOverlap}
+                    onChange={toggleOverlap}
                 />
                 <span className="checkmark"></span>
               </label>
@@ -298,7 +296,7 @@ function App() {
                     type="checkbox"
                     checked={state.playingBgm}
                     name="bgm" id="bgm"
-                    onClick={toggleBgm}
+                    onChange={toggleBgm}
                 />
                 <span className="checkmark"></span>
               </label>
@@ -359,10 +357,15 @@ function App() {
 
   return (
       <div id="app">
-        {navBar()}
-        {controller()}
-        {contents()}
-        {footer()}
+          {navBar()}
+          {/*<video className="background" loop autoPlay>*/}
+          {/*    <source src={original_song} type="video/mp4" />*/}
+          {/*    <source src={original_song} type="video/ogg" />*/}
+          {/*</video>*/}
+          <MarineGallery />
+          {controller()}
+          {contents()}
+          {footer()}
       </div>
   )
 }

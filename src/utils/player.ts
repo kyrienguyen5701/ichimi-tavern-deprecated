@@ -1,7 +1,7 @@
 import MarineBtnData from './data';
 import {MarineBtn} from '../components/MarineBtn';
 
-localStorage.clear();
+// localStorage.clear();
 
 const defaultStates = {
     loop: '',
@@ -27,7 +27,6 @@ export const getConfig = (saved?: boolean) => {
     let overlap = getChecked(document.getElementById('overlap') as HTMLInputElement);
     let bgmVolume = Number(localStorage.getItem('bgmVolume'));
     if (saved) {
-        console.log('Pog');
         loop = Boolean(localStorage.getItem('loop'));
         overlap = Boolean(localStorage.getItem('overlap'));
         bgmVolume = Number(localStorage.getItem('bgmVolume'));
