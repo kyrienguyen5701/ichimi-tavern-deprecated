@@ -1,5 +1,6 @@
 import MarineBtnData from './data';
-import {MarineBtn} from '../components/MarineBtn';
+import MarineBtn from '../components/MarineBtn';
+import {getConfig} from "./storage";
 
 // localStorage.clear();
 
@@ -7,42 +8,6 @@ const defaultStates = {
     loop: '',
     overlap: '',
     bgmVolume: 1
-}
-
-if (localStorage.getItem('loop') === null || localStorage.getItem('overlap') === null || localStorage.getItem('bgmVolume') === null) {
-    console.log("Bruh again");
-    Object.keys(defaultStates).forEach((state: string) => {
-        // @ts-ignore
-        localStorage.setItem(state, defaultStates[state])
-    })
-}
-
-const getChecked = (element: HTMLInputElement, ret?: boolean) => {
-    if (element) return element.checked;
-    return ret ? ret : false;
-}
-
-export const getConfig = (saved?: boolean) => {
-    let loop = getChecked(document.getElementById('loop') as HTMLInputElement);
-    let overlap = getChecked(document.getElementById('overlap') as HTMLInputElement);
-    let bgmVolume = Number(localStorage.getItem('bgmVolume'));
-    if (saved) {
-        loop = Boolean(localStorage.getItem('loop'));
-        overlap = Boolean(localStorage.getItem('overlap'));
-        bgmVolume = Number(localStorage.getItem('bgmVolume'));
-    }
-    return {
-        loop: loop,
-        overlap: overlap,
-        bgmVolume: bgmVolume
-    }
-}
-
-export const setConfig = () => {
-    const config = getConfig();
-    console.log(config);
-    localStorage.setItem('loop', config.loop === true ? 'true' : '');
-    localStorage.setItem('overlap', config.overlap === true ? 'true' : '');
 }
 
 // export function getRandom(pool: Array<MarineBtn>) {
@@ -68,7 +33,7 @@ export const soundCtrl = {
             this.playing.audio.play();
         }
         else {
-            audio.play()
+            audio.play();
             return {
                 btnData: btnData,
                 audio: audio

@@ -1,11 +1,10 @@
-import {MarineBtn, playBtn} from './components/MarineBtn';
+import MarineBtn from './components/MarineBtn';
 import categoryName from './assets/categories.json';
 import {getLang, setLang} from './utils/lang';
-import {getConfig, setConfig} from './utils/player'
+import {getConfig, setConfig} from './utils/storage'
 import MarineBtnData from './utils/data'
 import './App.scss';
 import React, {useCallback, useEffect, useState} from 'react';
-import background from './assets/background.jpg'
 import youtube from './assets/youtube.png';
 import twitter from './assets/twitter.png';
 import aqua_ch from './assets/channels/aqua_ch.jpg';
@@ -22,23 +21,31 @@ function App() {
 
   const [state, setState] = useState({
     siteLang: 'en',
+    disableGallery: false,
+    imageIndex: 1,
     loop: false,
     overlap: false,
+    bgm: new Audio(),
     playingBgm: false,
     playingRandom: false,
     playingRandomCtg: '',
+    slideInterval: 4000,
   });
 
   console.log(state);
 
+  // get configure from local storage
   useEffect(() => {
     // @ts-ignore
       setState(prevState => {
           return {
               ...prevState,
+              disableGallery: localStorage.getItem('disableGallery') ? true : false,
+              imageIndex: localStorage.getItem('imageIndex') ? Number(localStorage.getItem('imageIndex')) : 0,
               siteLang: localStorage.getItem('lang') ? localStorage.getItem('lang') : 'en',
               loop: localStorage.getItem('loop') ? true : false,
-              overlap: localStorage.getItem('overlap') ? true : false
+              overlap: localStorage.getItem('overlap') ? true : false,
+              bgm: new Audio(require('./assets/bgm.mp3').default)
           }
       })
   }, [])
@@ -89,8 +96,6 @@ function App() {
       return langs;
   };
 
-  const bgm = new Audio(require('./assets/bgm.mp3').default);
-
   let playing = {
     btnData: {} as MarineBtnData,
     audio: new Audio(),
@@ -105,6 +110,19 @@ function App() {
       }
     });
   }, [state.siteLang]);
+
+  const toggleGallery = useCallback(() => {
+      setConfig();
+      console.log(getConfig());
+      console.log('Current index:', state.imageIndex);
+      setState((prevState => {
+          return {
+              ...prevState,
+              disableGallery: !prevState.disableGallery,
+              imageIndex: Number(localStorage.getItem('imageIndex'))
+          }
+      }))
+  }, [state.disableGallery])
 
   const toggleLoop = useCallback(() => {
       setConfig();
@@ -124,7 +142,7 @@ function App() {
                 overlap: !prevState.overlap
             }
         }))
-    }, [state.loop]);
+    }, [state.overlap]);
 
   const toggleBgm = useCallback(() => {
     setState((prevState) => {
@@ -136,26 +154,31 @@ function App() {
   }, [state.playingBgm])
 
     useEffect(() => {
-        console.log('bgm')
         if (!state.playingBgm) {
-            bgm.onended = null;
-            bgm.pause();
-            console.log('Bruh')
+            state.bgm.onended = null;
+            state.bgm.pause();
         }
         else {
-            bgm.volume = getConfig().bgmVolume;
-            bgm.play();
-            bgm.onended = () => {
-                if (state.playingBgm) bgm.play()
+            state.bgm.volume = getConfig().bgmVolume;
+            state.bgm.play();
+            state.bgm.onended = () => {
+                if (state.playingBgm) state.bgm.play();
             }
         }
-    }, [bgm, state.playingBgm])
+    }, [state.bgm, state.playingBgm])
 
-  const bgmVolumeChange = () => {
+  const bgmVolumeChange = useCallback(() => {
     const value = Number((document.getElementById('bgmVolume') as HTMLInputElement).value) / 100;
-    bgm.volume = value;
     localStorage.setItem('bgmVolume', String(value));
-  }
+    state.bgm.volume = value;
+    setState(prevState => {
+        return({
+            ...prevState,
+            bgm: prevState.bgm
+        })
+    })
+  }, [state.bgm])
+
 
   // const chooseRandom = useCallback(() => {
   //   const arr: Array<object> = []
@@ -242,6 +265,22 @@ function App() {
     );
   }
 
+  const background =  () => {
+      return (
+          <div>
+              {/*<video className="background" loop autoPlay>*/}
+              {/*    <source src={original_song} type="video/mp4" />*/}
+              {/*    <source src={original_song} type="video/ogg" />*/}
+              {/*</video>*/}
+              <MarineGallery
+                  autoPlay={!state.disableGallery}
+                  slideInterval={state.slideInterval}
+                  imageIndex={state.imageIndex}
+              />
+          </div>
+      )
+  }
+
   const controller = () => {
     return (
         <div className="controller">
@@ -262,6 +301,19 @@ function App() {
               {/* @ts-ignore */}
               {state.playingRandom ? langs()[state.siteLang].action.stop : langs()[state.siteLang].action.nonstop}
             </button>
+            <div>
+              <label className="checkbox-container">
+                {/* @ts-ignore */}
+                No gallery
+                <input
+                    type="checkbox"
+                    checked={state.disableGallery}
+                    name="disable-gallery" id="disable-gallery"
+                    onChange={toggleGallery}
+                />
+                <span className="checkmark"></span>
+              </label>
+            </div>
             <div>
               <label className="checkbox-container">
                 {/* @ts-ignore */}
@@ -358,11 +410,7 @@ function App() {
   return (
       <div id="app">
           {navBar()}
-          {/*<video className="background" loop autoPlay>*/}
-          {/*    <source src={original_song} type="video/mp4" />*/}
-          {/*    <source src={original_song} type="video/ogg" />*/}
-          {/*</video>*/}
-          <MarineGallery />
+          {background()}
           {controller()}
           {contents()}
           {footer()}
