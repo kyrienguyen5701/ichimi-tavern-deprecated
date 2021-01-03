@@ -4,7 +4,7 @@ const common = "discord_server";
 const specialDates = {
     cirno: '9/9',
     halloween: '31/10',
-    christmas: '3/1'
+    christmas: '25/12'
 };
 const specialDate = Object.keys(specialDates).find(date => specialDates[date] === today);
 const discord_server = specialDate
