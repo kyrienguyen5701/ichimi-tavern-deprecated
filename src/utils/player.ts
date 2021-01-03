@@ -1,47 +1,38 @@
-import MarineBtnData from './data';
-import MarineBtn from '../components/MarineBtn';
+import MarineBtn, {MarineBtnState} from '../components/MarineBtn';
 import {getConfig} from "./storage";
 
-// localStorage.clear();
-
-const defaultStates = {
-    loop: '',
-    overlap: '',
-    bgmVolume: 1
+export function getRandom(pool: Array<object>) {
+    const audio = pool[Math.floor(Math.random() * pool.length)] as MarineBtn;
+    return {
+        audio: audio
+    }
 }
-
-// export function getRandom(pool: Array<MarineBtn>) {
-//     const audio = pool[Math.floor(Math.random() * pool.length)] as typeof MarineBtn;
-//     return {
-//         audio: audio
-//     }
-// }
 
 export const soundCtrl = {
     playing: {
-        btnData: {} as MarineBtnData,
+        btnState: {} as MarineBtnState,
         audio: new Audio()
     },
-    play: function(btnData: MarineBtnData, audio: HTMLAudioElement) {
+    play: function(btnState: MarineBtnState, audio: HTMLAudioElement) {
         if (!getConfig().overlap) {
             if (this.playing) {
-                this.playing.btnData.isPlaying = false;
+                // this.playing.btnState.isPlaying = false;
                 this.playing.audio.pause();
             }
             this.playing.audio = audio;
-            this.playing.btnData = btnData;
+            this.playing.btnState = btnState;
             this.playing.audio.play();
         }
         else {
             audio.play();
             return {
-                btnData: btnData,
+                btnState: btnState,
                 audio: audio
             }
         }
         if (getConfig().loop) {
             this.playing.audio.onended = () => {
-                this.play(btnData, this.playing.audio);
+                this.play(btnState, this.playing.audio);
             }
         }
         else {

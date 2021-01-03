@@ -1,22 +1,22 @@
-import MarineBtn from './components/MarineBtn';
+import MarineBtn, {MarineBtnState} from './components/MarineBtn';
 import categoryName from './assets/categories.json';
 import {getLang, setLang} from './utils/lang';
 import {getConfig, setConfig} from './utils/storage'
 import MarineBtnData from './utils/data'
 import './App.scss';
 import React, {useCallback, useEffect, useState} from 'react';
-import youtube from './assets/youtube.png';
-import twitter from './assets/twitter.png';
+import youtube from './assets/media/youtube.png';
+import twitter from './assets/media/twitter.png';
+import discord_server from './components/MarineDiscordServer';
 import aqua_ch from './assets/channels/aqua_ch.jpg';
 import fubuki_ch from './assets/channels/fubuki_ch.jpg';
 import pekora_ch from './assets/channels/pekora_ch.jpg';
-import github from './assets/github.png';
+import github from './assets/media/github.png';
 import MarineGallery from "./components/MarineGallery";
 // @ts-ignore
 import original_song from './assets/【original】Ahoy - 我ら宝鐘海賊団☆【ホロライブ-宝鐘マリン】.mp4';
 
-
-// TODO: Fix playing functions
+// TODO: Fix non-stop random functions
 function App() {
 
   const [state, setState] = useState({
@@ -31,8 +31,6 @@ function App() {
     playingRandomCtg: '',
     slideInterval: 4000,
   });
-
-  console.log(state);
 
   // get configure from local storage
   useEffect(() => {
@@ -57,8 +55,6 @@ function App() {
                 <MarineBtn
                     category={data.category}
                     file={data.file}
-                    isPlaying={false}
-                    isDisabled={false}
                     name={data.name}
                     url={data.url}
                 />
@@ -96,8 +92,8 @@ function App() {
       return langs;
   };
 
-  let playing = {
-    btnData: {} as MarineBtnData,
+  let current = {
+    btnState: {} as MarineBtnState,
     audio: new Audio(),
   };
 
@@ -113,8 +109,6 @@ function App() {
 
   const toggleGallery = useCallback(() => {
       setConfig();
-      console.log(getConfig());
-      console.log('Current index:', state.imageIndex);
       setState((prevState => {
           return {
               ...prevState,
@@ -153,19 +147,19 @@ function App() {
     })
   }, [state.playingBgm])
 
-    useEffect(() => {
-        if (!state.playingBgm) {
-            state.bgm.onended = null;
-            state.bgm.pause();
+  useEffect(() => {
+    if (!state.playingBgm) {
+        state.bgm.onended = null;
+        state.bgm.pause();
+    }
+    else {
+        state.bgm.volume = getConfig().bgmVolume;
+        state.bgm.play();
+        state.bgm.onended = () => {
+            if (state.playingBgm) state.bgm.play();
         }
-        else {
-            state.bgm.volume = getConfig().bgmVolume;
-            state.bgm.play();
-            state.bgm.onended = () => {
-                if (state.playingBgm) state.bgm.play();
-            }
-        }
-    }, [state.bgm, state.playingBgm])
+    }
+  }, [state.bgm, state.playingBgm])
 
   const bgmVolumeChange = useCallback(() => {
     const value = Number((document.getElementById('bgmVolume') as HTMLInputElement).value) / 100;
@@ -179,59 +173,57 @@ function App() {
     })
   }, [state.bgm])
 
+  const chooseRandom = useCallback(() => {
+    const arr: Array<object> = []
+    for (const [k, v] of Object.entries(categories())) {
+      // @ts-ignore
+      arr.push(...v.map(f => new MarineBtn(f)))
+    }
+    console.log(arr);
+    const selected = arr[Math.floor(Math.random() * arr.length)] as MarineBtn;
+    // @ts-ignore
+    selected.playBtn(() => {
+      if (state.playingRandom) {
+        chooseRandom();
+      }
+    })
+  }, [state.playingRandom])
 
-  // const chooseRandom = useCallback(() => {
-  //   const arr: Array<object> = []
-  //   for (const [k, v] of Object.entries(categories)) {
-  //     arr.push(...v.map(f => {
-  //       const btn = MarineBtn(f);
-  //       return btn;
-  //     }))
-  //   }
-  //   const selected = arr[Math.floor(Math.random() * arr.length)] as typeof MarineBtn;
-  //   selected.playBtn(() => {
-  //     if (state.playingRandom) {
-  //       chooseRandom()
-  //     }
-  //   })
-  // }, [state.playingRandom])
-  //
-  // const playRandom = useCallback(() => {
-  //   // TODO: write chooseRandom()
-  //   if (state.playingRandom) playing.audio.pause();
-  //   else chooseRandom();
-  //   setState((prevState) => {
-  //     return {
-  //       ...prevState,
-  //       playingRandomCtg: null,
-  //       playingRandom: !prevState.playingRandom,
-  //     }
-  //   });
-  // }, [state.playingRandom]);
+  const playRandom = useCallback(() => {
+    setState(prevState => {
+        return {
+            ...prevState,
+            playingRandom: !prevState.playingRandom
+        }
+    })
+  }, [state.playingRandom]);
 
-  // const chooseRandomCtg = useCallback((ctgs: Array<Object>, ctg: string) => {
-  //   const selected = MarineBtn(ctgs[Math.floor(Math.random() * ctgs.length)] as MarineBtnData)
-  //   playing = playBtn((selected) => {
-  //     if (state.playingRandomCtg === ctg) {
-  //       chooseRandomCtg(ctgs, ctg);
-  //     }
-  //   })
-  // }, [state.playingRandomCtg]);
+  useEffect(() => {
+      if (state.playingRandom) chooseRandom();
+  }, [state.playingRandom])
 
-  // const playRandomCtg = useCallback((arr: Array<Object>, ctg: string) => {
-  //   // TODO: fix chooseRandomCtg
-  //   if (state.playingRandomCtg === ctg) {
-  //     playing.btnData.isPlaying = false;
-  //     playing.audio.pause()
-  //   }
-  //   else chooseRandomCtg(arr, ctg);
-  //   setState(prevState => {
-  //     return {
-  //       ...prevState,
-  //       playingRandomCtg: prevState.playingRandomCtg === ctg ? null : ctg
-  //     }
-  //   });
-  // }, [state.playingRandomCtg])
+  const chooseRandomCtg = useCallback((ctgs: Array<Object>, ctg: string) => {
+    const selected = new MarineBtn(ctgs[Math.floor(Math.random() * ctgs.length)] as MarineBtnData)
+    current = selected.playBtn(() => {
+      if (state.playingRandomCtg === ctg) {
+        chooseRandomCtg(ctgs, ctg);
+      }
+    })
+  }, [state.playingRandomCtg]);
+
+  const playRandomCtg = useCallback((arr: Array<Object>, ctg: string) => {
+    if (state.playingRandomCtg === ctg) {
+      current.btnState.isPlaying = false;
+      current.audio.pause()
+    }
+    else chooseRandomCtg(arr, ctg);
+    setState(prevState => {
+      return {
+        ...prevState,
+        playingRandomCtg: prevState.playingRandomCtg === ctg ? '' : ctg
+      }
+    });
+  }, [state.playingRandomCtg])
 
   const navBar = () => {
     return (
@@ -242,6 +234,9 @@ function App() {
             </a>
             <a href="https://twitter.com/houshoumarine" target="_blank" rel="noreferrer">
               <img src={twitter} alt="Twitter Logo" className="logo"/>
+            </a>
+            <a href="https://discord.com/invite/pEA3fzK" target="_blank" rel="noreferrer">
+              <img src={discord_server} alt="Discord Server" className="logo circleFrame"/>
             </a>
             <a href="https://aquaminato.moe" className="centered" target="_blank" rel="noreferrer">
               <img src={aqua_ch} alt="Aqua Btn。湊あくあ" className="logo circleFrame"/>
@@ -287,7 +282,7 @@ function App() {
           <div>
             <button
                 className="btn"
-                // onClick={chooseRandom}
+                onClick={chooseRandom}
                 disabled={state.playingRandom || state.playingRandomCtg !== ""}
             >
               {/* @ts-ignore */}
@@ -295,7 +290,7 @@ function App() {
             </button>
             <button
                 className="btn"
-                // onClick={playRandom}
+                onClick={playRandom}
                 disabled={state.playingRandomCtg !== ""}
             >
               {/* @ts-ignore */}
@@ -380,7 +375,7 @@ function App() {
                       <h4>{ctg}</h4>
                       <button
                           className="btn"
-                          // onClick={() => playRandomCtg(categories[ctg], ctg)}
+                          onClick={() => playRandomCtg(categories()[ctg], ctg)}
                           disabled={state.playingRandom || (state.playingRandomCtg !== '' && state.playingRandomCtg !== ctg)}
                       >
                         {/* @ts-ignore */}

@@ -10,7 +10,7 @@ const MarineGallery = (props) => {
         if (props.autoPlay) _gallery.play();
         else _gallery.pause();
     })
-    
+
     const isMobile = () => {
         const isAndroid = /Android/i.test(navigator.userAgent);
         const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -30,8 +30,6 @@ const MarineGallery = (props) => {
             images.push({original: r(path).default});
         })
     }
-
-    console.log('Hey:', props.autoPlay);
 
     return (
         <ImageGallery
