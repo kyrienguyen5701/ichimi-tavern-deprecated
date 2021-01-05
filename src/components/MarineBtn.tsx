@@ -91,6 +91,7 @@ const MarineBtn = (props: {
         }, new Audio(require('../assets/sounds/' + sound).default)
         , setIsPlaying);
         if (props.data.category === 4 && !isMobile()) {
+            dispatch(toggleVideo(''));
             dispatch(toggleVideo(sound));
             ctrl.audio.volume = 0;
         }

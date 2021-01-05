@@ -16,13 +16,13 @@ const MarineGallery = (props) => {
 
     const images = [];
     if (!isMobile()) {
-        const r = require.context('../assets/pcBackgrounds/', false, /\.jpg|\.jpg$/);
+        const r = require.context('../assets/pcBackgrounds/', false, /\.jpg$/);
         r.keys().forEach((path) => {
             images.push({original: r(path).default});
         })
     }
     else {
-        const r = require.context('../assets/phoneBackgrounds/', false, /\.jpg|\.png$/);
+        const r = require.context('../assets/phoneBackgrounds/', false, /\.jpg$/);
         r.keys().forEach((path) => {
             images.push({original: r(path).default});
         })

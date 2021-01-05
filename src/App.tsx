@@ -280,10 +280,10 @@ function App() {
       return (
           <div>
               {video
-                ? <video className="background" autoPlay loop={state.loop}>
-                      <source src={require(`./assets/sounds/${video}`).default} type="video/mp4" />
-                      <source src={require(`./assets/sounds/${video}`).default} type="video/ogg" />
-                      Your browser does not support the video tag.
+                ? <video className="background image-gallery-image"
+                         src={require(`./assets/sounds/${video}`).default}
+                         autoPlay loop={state.loop}
+                  >
                   </video>
                 : <MarineGallery
                       autoPlay={!state.disableGallery}
