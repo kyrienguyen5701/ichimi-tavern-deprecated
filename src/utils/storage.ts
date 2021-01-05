@@ -44,7 +44,6 @@ export const getConfig = (saved?: boolean) => {
 
 export const setConfig = () => {
     const config = getConfig();
-    console.log(config);
     localStorage.setItem('disableGallery', config.disableGallery === true ? 'true' : '');
     localStorage.setItem('imageIndex', String(config.imageIndex));
     localStorage.setItem('loop', config.loop === true ? 'true' : '');

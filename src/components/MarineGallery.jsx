@@ -1,6 +1,9 @@
 import React, {useEffect, useRef} from 'react';
 import ImageGallery from 'react-image-gallery';
 import './MarineGallery.scss';
+import isMobile from "../utils/device";
+import {useDispatch} from "react-redux";
+import {setImageIndex} from "../redux/reducer";
 
 const MarineGallery = (props) => {
 
@@ -10,12 +13,6 @@ const MarineGallery = (props) => {
         if (props.autoPlay) _gallery.play();
         else _gallery.pause();
     })
-
-    const isMobile = () => {
-        const isAndroid = /Android/i.test(navigator.userAgent);
-        const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        return isAndroid || isiOS;
-    }
 
     const images = [];
     if (!isMobile()) {
@@ -31,6 +28,8 @@ const MarineGallery = (props) => {
         })
     }
 
+    const dispatch = useDispatch();
+
     return (
         <ImageGallery
             ref={i => _gallery = i}
@@ -41,9 +40,12 @@ const MarineGallery = (props) => {
             showPlayButton={false}
             showFullscreenButton={false}
             lazyLoad={true}
-            slideInterval={props.slideInterval}
+            slideInterval={4000}
             startIndex={props.imageIndex}
-            onSlide={(index) => localStorage.setItem('imageIndex', String(index))}
+            onSlide={(index) => {
+                localStorage.setItem('imageIndex', String(index));
+                dispatch(setImageIndex(index));
+            }}
             additionalClass="background"
         />
     )

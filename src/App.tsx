@@ -5,6 +5,8 @@ import {getConfig, setConfig} from './utils/storage'
 import MarineBtnData from './utils/data'
 import './App.scss';
 import React, {useCallback, useEffect, useState} from 'react';
+// @ts-ignore
+import {useDispatch, useSelector} from 'react-redux';
 import youtube from './assets/media/youtube.png';
 import twitter from './assets/media/twitter.png';
 import discord_server from './components/MarineDiscordServer';
@@ -14,23 +16,29 @@ import pekora_ch from './assets/channels/pekora_ch.jpg';
 import github from './assets/media/github.png';
 import MarineGallery from "./components/MarineGallery";
 // @ts-ignore
-import original_song from './assets/【original】Ahoy - 我ら宝鐘海賊団☆【ホロライブ-宝鐘マリン】.mp4';
 
 // TODO: Fix non-stop random functions
 function App() {
 
+  // const playingNow = useSelector((state: any) => state.playingNow);
+  // const hideGallery = useSelector((state: any) => state.hidden);
+  // const video = useSelector((state: any) => state.video);
+  // const dispatch = useDispatch();
+
   const [state, setState] = useState({
     siteLang: 'en',
     disableGallery: false,
-    imageIndex: 1,
+    imageIndex: 0,
     loop: false,
     overlap: false,
     bgm: new Audio(),
     playingBgm: false,
     playingRandom: false,
     playingRandomCtg: '',
-    slideInterval: 4000,
   });
+
+  const imgIndex = useSelector((state: any) => state.imageIndex);
+  const video = useSelector((state: any) => state.video);
 
   // get configure from local storage
   useEffect(() => {
@@ -38,25 +46,23 @@ function App() {
       setState(prevState => {
           return {
               ...prevState,
-              disableGallery: localStorage.getItem('disableGallery') ? true : false,
+              disableGallery: !!localStorage.getItem('disableGallery'),
               imageIndex: localStorage.getItem('imageIndex') ? Number(localStorage.getItem('imageIndex')) : 0,
               siteLang: localStorage.getItem('lang') ? localStorage.getItem('lang') : 'en',
-              loop: localStorage.getItem('loop') ? true : false,
-              overlap: localStorage.getItem('overlap') ? true : false,
+              loop: !!localStorage.getItem('loop'),
+              overlap: !!localStorage.getItem('overlap'),
               bgm: new Audio(require('./assets/bgm.mp3').default)
           }
       })
   }, [])
 
-  const buttons= (voices:Array<object>) => {
+  const buttons = (voices:Array<MarineBtnData>) => {
     return (
         <div className="voices">
-            {voices.map((data: any) =>
+            {voices.map((data: MarineBtnData) =>
                 <MarineBtn
-                    category={data.category}
-                    file={data.file}
-                    name={data.name}
-                    url={data.url}
+                    data={data}
+                    setImageIndex={setImageIndex}
                 />
             )}
         </div>
@@ -64,7 +70,7 @@ function App() {
   }
 
   const categories = () => {
-      const categories: Record<string, Array<object>> = {};
+      const categories: Record<string, Array<MarineBtnData>> = {};
       const getCategoryName = (ctg: string) => {
         return getLang((categoryName as any)[ctg]);
       };
@@ -117,6 +123,16 @@ function App() {
           }
       }))
   }, [state.disableGallery])
+
+  const setImageIndex = useCallback(() => {
+      setConfig();
+      setState((prevState => {
+          return {
+              ...prevState,
+              imageIndex: imgIndex
+          }
+      }))
+  } , [imgIndex])
 
   const toggleLoop = useCallback(() => {
       setConfig();
@@ -173,59 +189,59 @@ function App() {
     })
   }, [state.bgm])
 
-  const chooseRandom = useCallback(() => {
-    const arr: Array<object> = []
-    for (const [k, v] of Object.entries(categories())) {
-      // @ts-ignore
-      arr.push(...v.map(f => new MarineBtn(f)))
-    }
-    console.log(arr);
-    const selected = arr[Math.floor(Math.random() * arr.length)] as MarineBtn;
-    // @ts-ignore
-    selected.playBtn(() => {
-      if (state.playingRandom) {
-        chooseRandom();
-      }
-    })
-  }, [state.playingRandom])
+  // const chooseRandom = useCallback(() => {
+  //   const arr: Array<object> = []
+  //   for (const [k, v] of Object.entries(categories())) {
+  //     // @ts-ignore
+  //     arr.push(...v.map(f => new MarineBtn(f)))
+  //   }
+  //   console.log(arr);
+  //   const selected = arr[Math.floor(Math.random() * arr.length)] as MarineBtn;
+  //   // @ts-ignore
+  //   selected.playBtn(() => {
+  //     if (state.playingRandom) {
+  //       chooseRandom();
+  //     }
+  //   })
+  // }, [state.playingRandom])
+  //
+  // const playRandom = useCallback(() => {
+  //   setState(prevState => {
+  //       return {
+  //           ...prevState,
+  //           playingRandom: !prevState.playingRandom
+  //       }
+  //   })
+  // }, [state.playingRandom]);
+  //
+  // useEffect(() => {
+  //     if (state.playingRandom) chooseRandom();
+  // }, [state.playingRandom])
+  //
+  // const chooseRandomCtg = useCallback((ctgs: Array<Object>, ctg: string) => {
+  //   const selected = new MarineBtn(ctgs[Math.floor(Math.random() * ctgs.length)] as MarineBtnData)
+  //   current = selected.playBtn(() => {
+  //     if (state.playingRandomCtg === ctg) {
+  //       chooseRandomCtg(ctgs, ctg);
+  //     }
+  //   })
+  // }, [state.playingRandomCtg]);
+  //
+  // const playRandomCtg = useCallback((arr: Array<Object>, ctg: string) => {
+  //   if (state.playingRandomCtg === ctg) {
+  //     current.btnState.isPlaying = false;
+  //     current.audio.pause()
+  //   }
+  //   else chooseRandomCtg(arr, ctg);
+  //   setState(prevState => {
+  //     return {
+  //       ...prevState,
+  //       playingRandomCtg: prevState.playingRandomCtg === ctg ? '' : ctg
+  //     }
+  //   });
+  // }, [state.playingRandomCtg])
 
-  const playRandom = useCallback(() => {
-    setState(prevState => {
-        return {
-            ...prevState,
-            playingRandom: !prevState.playingRandom
-        }
-    })
-  }, [state.playingRandom]);
-
-  useEffect(() => {
-      if (state.playingRandom) chooseRandom();
-  }, [state.playingRandom])
-
-  const chooseRandomCtg = useCallback((ctgs: Array<Object>, ctg: string) => {
-    const selected = new MarineBtn(ctgs[Math.floor(Math.random() * ctgs.length)] as MarineBtnData)
-    current = selected.playBtn(() => {
-      if (state.playingRandomCtg === ctg) {
-        chooseRandomCtg(ctgs, ctg);
-      }
-    })
-  }, [state.playingRandomCtg]);
-
-  const playRandomCtg = useCallback((arr: Array<Object>, ctg: string) => {
-    if (state.playingRandomCtg === ctg) {
-      current.btnState.isPlaying = false;
-      current.audio.pause()
-    }
-    else chooseRandomCtg(arr, ctg);
-    setState(prevState => {
-      return {
-        ...prevState,
-        playingRandomCtg: prevState.playingRandomCtg === ctg ? '' : ctg
-      }
-    });
-  }, [state.playingRandomCtg])
-
-  const navBar = () => {
+  const NavBar = () => {
     return (
         <div className="nav">
           <div className="contact">
@@ -253,36 +269,38 @@ function App() {
             <div>{langs()[state.siteLang].lang[state.siteLang]}</div>
             <div>
               {/* @ts-ignore */}
-              {Object.entries(langs()[state.siteLang].lang).map(([abbv, lang]) => <div className="lang" onClick={() => set_lang(abbv)}>{lang}</div>)}
+              {Object.entries(langs()[state.siteLang].lang).map(([abbv, lang]) => <div key={abbv} className="lang" onClick={() => set_lang(abbv)}>{lang}</div>)}
             </div>
           </div>
         </div>
     );
   }
 
-  const background =  () => {
+  const Background =  () => {
       return (
           <div>
-              {/*<video className="background" loop autoPlay>*/}
-              {/*    <source src={original_song} type="video/mp4" />*/}
-              {/*    <source src={original_song} type="video/ogg" />*/}
-              {/*</video>*/}
-              <MarineGallery
-                  autoPlay={!state.disableGallery}
-                  slideInterval={state.slideInterval}
-                  imageIndex={state.imageIndex}
-              />
+              {video
+                ? <video className="background" autoPlay loop={state.loop}>
+                      <source src={require(`./assets/sounds/${video}`).default} type="video/mp4" />
+                      <source src={require(`./assets/sounds/${video}`).default} type="video/ogg" />
+                      Your browser does not support the video tag.
+                  </video>
+                : <MarineGallery
+                      autoPlay={!state.disableGallery}
+                      imageIndex={state.imageIndex}
+                  />
+              }
           </div>
       )
   }
 
-  const controller = () => {
+  const Controller = () => {
     return (
         <div className="controller">
           <div>
             <button
                 className="btn"
-                onClick={chooseRandom}
+                // onClick={chooseRandom}
                 disabled={state.playingRandom || state.playingRandomCtg !== ""}
             >
               {/* @ts-ignore */}
@@ -290,7 +308,7 @@ function App() {
             </button>
             <button
                 className="btn"
-                onClick={playRandom}
+                // onClick={playRandom}
                 disabled={state.playingRandomCtg !== ""}
             >
               {/* @ts-ignore */}
@@ -365,7 +383,7 @@ function App() {
     );
   }
 
-  const contents = () => {
+  const Contents = () => {
     return (
         <div>
           {
@@ -375,7 +393,7 @@ function App() {
                       <h4>{ctg}</h4>
                       <button
                           className="btn"
-                          onClick={() => playRandomCtg(categories()[ctg], ctg)}
+                          // onClick={() => playRandomCtg(categories()[ctg], ctg)}
                           disabled={state.playingRandom || (state.playingRandomCtg !== '' && state.playingRandomCtg !== ctg)}
                       >
                         {/* @ts-ignore */}
@@ -390,7 +408,7 @@ function App() {
     );
   }
 
-  const footer = () => {
+  const Footer = () => {
     return (
         <div className="footer">
           <a href="https://github.com/kyrienguyen5701/marine-button" target="_blank" rel="noreferrer">
@@ -404,11 +422,11 @@ function App() {
 
   return (
       <div id="app">
-          {navBar()}
-          {background()}
-          {controller()}
-          {contents()}
-          {footer()}
+          {NavBar()}
+          {Background()}
+          {Controller()}
+          {Contents()}
+          {Footer()}
       </div>
   )
 }
