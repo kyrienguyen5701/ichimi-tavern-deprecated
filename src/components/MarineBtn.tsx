@@ -81,24 +81,27 @@ const MarineBtn = (props: {
     const playBtn = (callback?: Function) => {
         setIsPlaying(true);
         if (video) {
-            dispatch(toggleVideo(''));
-            props.setImageIndex();
+            if (!getConfig().overlap) {
+                dispatch(toggleVideo(''));
+                props.setImageIndex();
+            }
         }
         let sound = props.data.file;
         const ctrl = soundCtrl.play( {
             isPlaying: true,
-            isDisabled: false
+            isDisabled: false,
         }, new Audio(require('../assets/sounds/' + sound).default)
         , setIsPlaying);
         if (props.data.category === 4 && !isMobile()) {
-            dispatch(toggleVideo(''));
             dispatch(toggleVideo(sound));
             ctrl.audio.volume = 0;
         }
         if (!getConfig().loop) {
             ctrl.audio.onended = () => {
                 setIsPlaying(false);
-                dispatch(toggleVideo(''));
+                if (!getConfig().overlap && !video) {
+                    dispatch(toggleVideo(''));
+                }
                 if (callback) {
                     callback();
                 }

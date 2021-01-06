@@ -20,11 +20,9 @@ export const soundCtrl = {
         }
         else {
             audio.play();
-            return {
-                btnState: btnState,
-                setIsPlaying: setIsPlaying,
-                audio: audio
-            }
+            this.playing.audio = audio;
+            this.playing.btnState = btnState;
+            this.playing.setIsPlaying = setIsPlaying;
         }
         if (getConfig().loop) {
             this.playing.audio.onended = () => {
@@ -37,4 +35,3 @@ export const soundCtrl = {
         return this.playing
     }
 }
-
