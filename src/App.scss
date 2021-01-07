@@ -12,11 +12,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  animation: fadeIn ease 3s;
-  -webkit-animation: fadeIn ease 3s;
-  -moz-animation: fadeIn ease 3s;
-  -o-animation: fadeIn ease 3s;
-  -ms-animation: fadeIn ease 3s;
+  animation: fadeIn ease 1s;
+  -webkit-animation: fadeIn ease 1s;
+  -moz-animation: fadeIn ease 1s;
+  -o-animation: fadeIn ease 1s;
+  -ms-animation: fadeIn ease 1s;
 
   .background {
     width: 100%;
@@ -39,15 +39,8 @@
     top: 0px;
     background: var(--marine-color);
     z-index: 100;
-    .contact {
-      display: flex;
-      a {
-        padding: var(--spacing-low);
-        display: flex;
-        &:hover {
-          background: var(--marine-color-light);
-        }
-      }
+    #badge {
+      padding: 10px
     }
     .lang-selector {
       &>div {
@@ -110,8 +103,17 @@
     display: flex;
     background: var(--marine-color);
     justify-content: space-between;
-    padding: 10px;
     width: -webkit-fill-available;
+    .contact {
+      display: flex;
+      a {
+        padding: var(--spacing-low);
+        display: flex;
+        &:hover {
+          background: var(--marine-color-light);
+        }
+      }
+    }
     > * {
       margin: auto 0;
     }

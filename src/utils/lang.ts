@@ -17,3 +17,12 @@ export const getLang = (obj: object) : string => {
 export const setLang = (lang: string) => {
     localStorage.setItem('lang', lang);
 }
+
+export const langs = () => {
+    const r = require.context('../assets/langs', false, /\.json$/)
+    const langs: object = {}
+    r.keys().forEach((path: string) => {
+        (langs as any)[path.slice(2, 4)] = r(path)
+    })
+    return langs;
+};
