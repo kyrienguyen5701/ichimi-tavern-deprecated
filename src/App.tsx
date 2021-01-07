@@ -6,7 +6,7 @@ import MarineBtnData from './utils/data'
 import './App.scss';
 import React, {useCallback, useEffect, useState} from 'react';
 // @ts-ignore
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import youtube from './assets/media/youtube.png';
 import twitter from './assets/media/twitter.png';
 import discord_server from './components/MarineDiscordServer';
@@ -15,15 +15,10 @@ import fubuki_ch from './assets/channels/fubuki_ch.jpg';
 import pekora_ch from './assets/channels/pekora_ch.jpg';
 import github from './assets/media/github.png';
 import MarineGallery from "./components/MarineGallery";
-// @ts-ignore
+import MarineLoadingScreen from "./components/MarineLoadingScreen";
 
 // TODO: Fix non-stop random functions
 function App() {
-
-  // const playingNow = useSelector((state: any) => state.playingNow);
-  // const hideGallery = useSelector((state: any) => state.hidden);
-  // const video = useSelector((state: any) => state.video);
-  // const dispatch = useDispatch();
 
   const [state, setState] = useState({
     siteLang: 'en',
@@ -36,13 +31,15 @@ function App() {
     playingRandom: false,
     playingRandomCtg: '',
   });
-
+  const [loading, setLoading] = useState(true);
   const imgIndex = useSelector((state: any) => state.imageIndex);
   const video = useSelector((state: any) => state.video);
 
+
   // get configure from local storage
   useEffect(() => {
-    // @ts-ignore
+      setTimeout(() => setLoading(false), 4000);
+        // @ts-ignore
       setState(prevState => {
           return {
               ...prevState,
@@ -144,15 +141,15 @@ function App() {
       }))
   }, [state.loop]);
 
-    const toggleOverlap = useCallback(() => {
-        setConfig();
-        setState((prevState => {
-            return {
-                ...prevState,
-                overlap: !prevState.overlap
-            }
-        }))
-    }, [state.overlap]);
+  const toggleOverlap = useCallback(() => {
+      setConfig();
+      setState((prevState => {
+          return {
+              ...prevState,
+              overlap: !prevState.overlap
+          }
+      }))
+  }, [state.overlap]);
 
   const toggleBgm = useCallback(() => {
     setState((prevState) => {
@@ -420,14 +417,15 @@ function App() {
     );
   }
 
-  return (
-      <div id="app">
-          {NavBar()}
-          {Background()}
-          {Controller()}
-          {Contents()}
-          {Footer()}
-      </div>
+  return (loading
+          ? <MarineLoadingScreen />
+          : <div id="app">
+              {NavBar()}
+              {Background()}
+              {Controller()}
+              {Contents()}
+              {Footer()}
+          </div>
   )
 }
 
