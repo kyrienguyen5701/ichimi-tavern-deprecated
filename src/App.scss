@@ -40,33 +40,44 @@
     background: var(--marine-color);
     z-index: 100;
     #badge {
-      padding: 10px
+      padding: 8px
     }
-    .lang-selector {
-      &>div {
-        cursor: pointer;
-        &:first-child {
-          padding: var(--spacing-med);
-          height: calc(100% - var(--spacing-med) * 2);
-        }
-        &:last-child {
-          right: 0;
-          display: none;
-          position: absolute;
-        }
-      }
-      &:hover {
-        &>div:last-child {
-          display: block;
-        }
-      }
-      .lang {
+    .s-nav {
+      display: flex;
+      a {
         padding: var(--spacing-med);
-        right: 0;
-        background: var(--marine-color);
+        color: #c8f6e0;
         &:hover {
           cursor: pointer;
           background: var(--marine-color-light);
+        }
+      }
+      .lang-selector {
+        &>div {
+          cursor: pointer;
+          &:first-child {
+            padding: var(--spacing-med);
+            height: calc(100% - var(--spacing-med) * 2);
+          }
+          &:last-child {
+            right: 0;
+            display: none;
+            position: absolute;
+          }
+        }
+        &:hover {
+          &>div:last-child {
+            display: block;
+          }
+        }
+        .lang {
+          padding: var(--spacing-med);
+          right: 0;
+          background: var(--marine-color);
+          &:hover {
+            cursor: pointer;
+            background: var(--marine-color-light);
+          }
         }
       }
     }
