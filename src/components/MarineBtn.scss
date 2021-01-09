@@ -1,4 +1,5 @@
 @import "../assets/common.scss";
+@import url('https://fonts.googleapis.com/css2?family=Kosugi&display=swap');
 
 .btn {
     display: inline-block;
@@ -9,7 +10,7 @@
     width: max-content;
     transition: all .5s ease;
     opacity: .8;
-    font-weight: bold;
+    font-family: 'Kosugi', sans-serif;
     color: #c8f6e0;
     &:hover {
         cursor: pointer;

@@ -21,7 +21,6 @@ const Homepage = () => {
         playingRandom: false,
         playingRandomCtg: '',
     });
-    const [loading, setLoading] = useState(true);
 
     // overall app state
     const siteLang = useSelector((state: any) => state.siteLang);
@@ -30,7 +29,6 @@ const Homepage = () => {
 
     // get configure from local storage
     useEffect(() => {
-        setTimeout(() => setLoading(false), 4000);
         // @ts-ignore
         setState(prevState => {
             return {

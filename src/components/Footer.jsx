@@ -1,5 +1,4 @@
 import github from "../assets/media/github.png";
-import React from "react";
 import youtube from "../assets/media/youtube.png";
 import twitter from "../assets/media/twitter.png";
 import discord_server from "./MarineDiscordServer";
@@ -30,7 +29,7 @@ const Footer = () => {
                     <img src={pekora_ch} alt={"Pekora Btn. 兎田ぺこら"} className="logo circleFrame" />
                 </a>
             </div>
-            <div class="contact">
+            <div className="contact">
                 <a href="https://github.com/kyrienguyen5701/marine-button" target="_blank" rel="noreferrer">
                     <img src={github} alt="Github logo" className="logo" />
                 </a>

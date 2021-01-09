@@ -20,14 +20,14 @@ const NavBar = () => {
     return (
         <Router>
             <div className="nav">
-                <div id="badge">
+                <div className="nav-left">
                     <Link to="/">
-                        <img src={require('../assets/houshou_flag.png').default} alt="Houshou flag"/>
+                        <img src={require('../assets/houshou_flag.png').default} alt="Houshou flag" className="logo"/>
                     </Link>
                 </div>
-                <div className="s-nav">
+                <div className="nav-right">
                     <Link to="/disclaimer">
-                        Disclaimer
+                        <div>Disclaimer</div>
                     </Link>
                     <div className="lang-selector">
                         <div>{langs()[siteLang].lang[siteLang]}</div>

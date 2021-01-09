@@ -99,7 +99,7 @@ const MarineBtn = (props: {
         if (!getConfig().loop) {
             ctrl.audio.onended = () => {
                 setIsPlaying(false);
-                if (!getConfig().overlap && !video) {
+                if ((!getConfig().overlap && !video) || props.data.category === 4) {
                     dispatch(toggleVideo(''));
                 }
                 if (callback) {
