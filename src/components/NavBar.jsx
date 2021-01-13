@@ -6,7 +6,7 @@ import {changeLang} from "../redux/reducer";
 import Homepage from "../screens/Homepage";
 import Disclaimer from "../screens/Disclaimer";
 
-// TODO: Write a disclaimer page and create a gif for the Houshou flag
+// TODO: Create a gif for the Houshou flag
 const NavBar = () => {
 
     const siteLang = useSelector((state) => state.siteLang);
@@ -38,7 +38,7 @@ const NavBar = () => {
                 </div>
             </div>
             <Switch>
-                <Route path="/">
+                <Route exact path="/">
                     <Homepage />
                 </Route>
                 <Route path="/disclaimer">

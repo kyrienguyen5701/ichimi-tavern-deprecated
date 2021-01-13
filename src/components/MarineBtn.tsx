@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
+import categoryNames from '../assets/categories.json';
 // @ts-ignore
 import {useSelector, useDispatch} from 'react-redux';
 import {getLang} from '../utils/lang';
@@ -71,14 +72,18 @@ export interface MarineBtnState {
 const MarineBtn = (props: {
     data: MarineBtnData,
     setImageIndex: Function,
+    onRandom: Function,
+    onRandomCtg: Function
 }) => {
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [isDisabled, setIsDisabled] = useState(false);
     const dispatch = useDispatch();
     const video = useSelector((state: any) => (state.video));
+    const random = useSelector((state: any) => (state.random));
+    const randomCtg = useSelector((state: any) => (state.randomCtg));
 
-    const playBtn = (callback?: Function) => {
+    const playBtn = () => {
         setIsPlaying(true);
         if (video) {
             if (!getConfig().overlap) {
@@ -102,8 +107,11 @@ const MarineBtn = (props: {
                 if ((!getConfig().overlap && !video) || props.data.category === 4) {
                     dispatch(toggleVideo(''));
                 }
-                if (callback) {
-                    callback();
+                if (random) {
+                    props.onRandom();
+                }
+                if (randomCtg) {
+                    props.onRandomCtg(randomCtg);
                 }
             }
         }
@@ -112,7 +120,12 @@ const MarineBtn = (props: {
 
     return (
         <button
-            className={`btn ${isPlaying ? "playing" : ""}`}
+            className={`
+                btn 
+                MarineBtn 
+                ${getLang((categoryNames as any)[props.data.category])} 
+                ${isPlaying ? "playing" : ""}`
+            }
             disabled={isDisabled}
             onClick={() => playBtn()}
         >

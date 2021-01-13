@@ -3,12 +3,16 @@ import {getConfig} from "../utils/storage";
 const CHANGE_LANG = 'CHANGE_LANG'
 const TOGGLE_VIDEO = 'TOGGLE_VIDEO';
 const SET_IMAGE_INDEX = 'SET_IMAGE_INDEX';
+const PLAYING_RANDOM = 'PLAYING_RANDOM';
+const PLAYING_RANDOM_CTG = 'PLAYING_RANDOM_CTG';
 
 const initialState = {
     siteLang: localStorage.getItem('lang') ? localStorage.getItem('lang') : 'en',
     playingNow: false,
     video: '',
-    imageIndex: getConfig().imageIndex
+    imageIndex: getConfig().imageIndex,
+    random: false,
+    randomCtg: ''
 };
 
 export const changeLang = (item) => ({
@@ -23,6 +27,16 @@ export const toggleVideo = (item) => ({
 
 export const setImageIndex = (item) => ({
     type: SET_IMAGE_INDEX,
+    payload: item
+})
+
+export const playingRandom = (item) => ({
+    type: PLAYING_RANDOM,
+    payload: item
+})
+
+export const playingRandomCtg = (item) => ({
+    type: PLAYING_RANDOM_CTG,
     payload: item
 })
 
@@ -42,6 +56,16 @@ const rootReducer = (state = initialState, action) => {
             return {
                 ...state,
                 imageIndex: action.payload
+            }
+        case PLAYING_RANDOM:
+            return {
+                ...state,
+                random: action.payload
+            }
+        case PLAYING_RANDOM_CTG:
+            return {
+                ...state,
+                randomCtg: action.payload
             }
         default:
             return state

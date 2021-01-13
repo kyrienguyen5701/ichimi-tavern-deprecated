@@ -1,12 +1,13 @@
 import MarineBtn, {MarineBtnState} from '../components/MarineBtn';
-import categoryName from '../assets/categories.json';
+import categoryNames from '../assets/categories.json';
 import {getLang, langs} from '../utils/lang';
 import {getConfig, setConfig} from '../utils/storage'
 import MarineBtnData from '../utils/data';
 import React, {useCallback, useEffect, useState} from 'react';
 // @ts-ignore
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import MarineBackground from "../components/MarineBackground";
+import { playingRandom, playingRandomCtg } from '../redux/reducer';
 
 // TODO: Fix non-stop random functions
 const Homepage = () => {
@@ -18,14 +19,15 @@ const Homepage = () => {
         overlap: false,
         bgm: new Audio(),
         playingBgm: false,
-        playingRandom: false,
-        playingRandomCtg: '',
     });
 
     // overall app state
     const siteLang = useSelector((state: any) => state.siteLang);
     const imgIndex = useSelector((state: any) => state.imageIndex);
     const video = useSelector((state: any) => state.video);
+    const random = useSelector((state: any) => state.random);
+    const randomCtg = useSelector((state: any) => state.randomCtg);
+    const dispatch = useDispatch();
 
     // get configure from local storage
     useEffect(() => {
@@ -49,6 +51,8 @@ const Homepage = () => {
                     <MarineBtn
                         data={data}
                         setImageIndex={setImageIndex}
+                        onRandom={chooseRandom}
+                        onRandomCtg={chooseRandomCtg}
                     />
                 )}
             </div>
@@ -58,7 +62,7 @@ const Homepage = () => {
     const categories = () => {
         const categories: Record<string, Array<MarineBtnData>> = {};
         const getCategoryName = (ctg: string) => {
-            return getLang((categoryName as any)[ctg]);
+            return getLang((categoryNames as any)[ctg]);
         };
         const r = require.context('../assets/meta/', false, /\.json$/);
         r.keys().forEach((path: string) => {
@@ -156,57 +160,33 @@ const Homepage = () => {
         })
     }, [state.bgm])
 
-    // const chooseRandom = useCallback(() => {
-    //   const arr: Array<object> = []
-    //   for (const [k, v] of Object.entries(categories())) {
-    //     // @ts-ignore
-    //     arr.push(...v.map(f => new MarineBtn(f)))
-    //   }
-    //   console.log(arr);
-    //   const selected = arr[Math.floor(Math.random() * arr.length)] as MarineBtn;
-    //   // @ts-ignore
-    //   selected.playBtn(() => {
-    //     if (state.playingRandom) {
-    //       chooseRandom();
-    //     }
-    //   })
-    // }, [state.playingRandom])
-    //
-    // const playRandom = useCallback(() => {
-    //   setState(prevState => {
-    //       return {
-    //           ...prevState,
-    //           playingRandom: !prevState.playingRandom
-    //       }
-    //   })
-    // }, [state.playingRandom]);
-    //
-    // useEffect(() => {
-    //     if (state.playingRandom) chooseRandom();
-    // }, [state.playingRandom])
-    //
-    // const chooseRandomCtg = useCallback((ctgs: Array<Object>, ctg: string) => {
-    //   const selected = new MarineBtn(ctgs[Math.floor(Math.random() * ctgs.length)] as MarineBtnData)
-    //   current = selected.playBtn(() => {
-    //     if (state.playingRandomCtg === ctg) {
-    //       chooseRandomCtg(ctgs, ctg);
-    //     }
-    //   })
-    // }, [state.playingRandomCtg]);
-    //
-    // const playRandomCtg = useCallback((arr: Array<Object>, ctg: string) => {
-    //   if (state.playingRandomCtg === ctg) {
-    //     current.btnState.isPlaying = false;
-    //     current.audio.pause()
-    //   }
-    //   else chooseRandomCtg(arr, ctg);
-    //   setState(prevState => {
-    //     return {
-    //       ...prevState,
-    //       playingRandomCtg: prevState.playingRandomCtg === ctg ? '' : ctg
-    //     }
-    //   });
-    // }, [state.playingRandomCtg])
+    const chooseRandom = useCallback(() => {
+      const pool = document.getElementsByClassName('MarineBtn');
+      const selected = pool[Math.floor(Math.random() * pool.length)] as any;
+      selected.click();
+    }, [])
+
+    const playRandom = useCallback(() => {
+      dispatch(playingRandom(!random));
+    }, [random]);
+    
+    useEffect(() => {
+        if (random) chooseRandom();
+    }, [random])
+
+    const chooseRandomCtg = useCallback((ctg: string) => {
+        const pool = document.getElementsByClassName(ctg);
+        const selected = pool[Math.floor(Math.random() * pool.length)] as any;
+        selected.click();
+      }, [randomCtg])
+  
+    const playRandomCtg = useCallback((ctg: string) => {
+        dispatch(playingRandomCtg(randomCtg ? '' : ctg));
+    }, [randomCtg]);
+      
+    useEffect(() => {
+        if (randomCtg) chooseRandomCtg(randomCtg);
+    }, [randomCtg])
 
     const Controller = () => {
         return (
@@ -214,19 +194,19 @@ const Homepage = () => {
                 <div>
                     <button
                         className="btn"
-                        // onClick={chooseRandom}
-                        disabled={state.playingRandom || state.playingRandomCtg !== ""}
+                        onClick={chooseRandom}
+                        disabled={random || randomCtg !== ""}
                     >
                         {/* @ts-ignore */}
                         {langs()[siteLang].action.random}
                     </button>
                     <button
                         className="btn"
-                        // onClick={playRandom}
-                        disabled={state.playingRandomCtg !== ""}
+                        onClick={playRandom}
+                        disabled={randomCtg !== ""}
                     >
                         {/* @ts-ignore */}
-                        {state.playingRandom ? langs()[siteLang].action.stop : langs()[siteLang].action.nonstop}
+                        {random ? langs()[siteLang].action.stop : langs()[siteLang].action.nonstop}
                     </button>
                     <div>
                         <label className="checkbox-container">
@@ -248,7 +228,7 @@ const Homepage = () => {
                             <input
                                 type="checkbox"
                                 checked={state.loop}
-                                disabled={state.playingRandom}
+                                disabled={random}
                                 name="loop" id="loop"
                                 onChange={toggleLoop}
                             />
@@ -261,7 +241,7 @@ const Homepage = () => {
                             <input
                                 type="checkbox"
                                 checked={state.overlap}
-                                disabled={state.playingRandom}
+                                disabled={random}
                                 name="overlap" id="overlap"
                                 onChange={toggleOverlap}
                             />
@@ -307,11 +287,11 @@ const Homepage = () => {
                                 <h4>{ctg}</h4>
                                 <button
                                     className="btn"
-                                    // onClick={() => playRandomCtg(categories()[ctg], ctg)}
-                                    disabled={state.playingRandom || (state.playingRandomCtg !== '' && state.playingRandomCtg !== ctg)}
+                                    onClick={() => playRandomCtg(ctg)}
+                                    disabled={random || (randomCtg !== '' && randomCtg !== ctg)}
                                 >
                                     {/* @ts-ignore */}
-                                    {state.playingRandomCtg === ctg ? langs()[siteLang].action.stop : langs()[siteLang].action.nonstop}
+                                    {randomCtg === ctg ? langs()[siteLang].action.stop : langs()[siteLang].action.nonstop}
                                 </button>
                             </div>
                             {buttons(voices)}
