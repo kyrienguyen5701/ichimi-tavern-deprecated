@@ -2,12 +2,14 @@ import React from "react";
 import MarineBackground from "../components/MarineBackground";
 import { getConfig } from "../utils/storage";
 import { useSelector, useDispatch } from "react-redux";
-import { toggleVideo } from "../redux/reducer";
+import { playingRandom, playingRandomCtg, toggleVideo } from "../redux/reducer";
 
 const Disclaimer = () => {
     const imageIndex = useSelector(state => state.imageIndex);
     const dispatch = useDispatch();
     dispatch(toggleVideo(''));
+    dispatch(playingRandom(false));
+    dispatch(playingRandomCtg(''));
     return (
         <div>
             <MarineBackground
