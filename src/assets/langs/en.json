@@ -7,7 +7,8 @@
         "overlap": "Overlap",
         "bgm": "BGM",
         "volume": "Volume",
-        "stop": "Stop"
+        "stop": "Stop",
+        "noGallery": "No gallery"
     },
     "context": {
         "source": "Youtube source URL",
@@ -16,9 +17,7 @@
     "text": {
         "trans": "Help with translation",
         "contrib": "Add more audio/buttons",
-        "term": "This project is a work of enthusiasts and is not related to the hololive official",
-        "aqua": "Aqua Button",
-        "fubuki": "Fubuki Button"
+        "term": "This project is a work of enthusiasts and is not related to the hololive official"
     },
     "lang": {
         "en": "English",

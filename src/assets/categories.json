@@ -1,17 +1,22 @@
 {
     "0": {
-        "en": "General - Uncategorized"
+        "en": "Marineglish",
+        "ja": "マリングリッシュ"
     },
     "1": {
-        "en": "Laugh"
+        "en": "Laugh",
+        "ja": "笑い"
     },
     "2": {
-        "en": "..."
+        "en": "Noise",
+        "ja": "音"
     },
     "3": {
-        "en": "Sentences"
+        "en": "Sentence",
+        "ja": "文"
     },
     "4": {
-        "en": "Singings"
+        "en": "Song",
+        "ja": "唱歌"
     }
 }

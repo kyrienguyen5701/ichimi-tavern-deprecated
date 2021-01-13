@@ -7,7 +7,8 @@
         "overlap": "重なる",
         "bgm": "BGM",
         "volume": "ボリューム",
-        "stop": "ストップ"
+        "stop": "ストップ",
+        "noGallery": "画廊ない"
     },
     "context": {
         "source": "Youtube source URL",
@@ -15,10 +16,8 @@
     },
     "text": {
         "trans": "Help with translation",
-        "contrib": "Add more audio/pekobuttons",
-        "term": "このプロジェクトは愛好家の作品であり、ホロライブの関係者とは関係ありません",
-        "aqua": "あくあボタン",
-        "fubuki": "フブキボタン"
+        "contrib": "Add more audio/buttons",
+        "term": "このプロジェクトは愛好家の作品であり、ホロライブの関係者とは関係ありません"
     },
     "lang": {
         "en": "English",
