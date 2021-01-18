@@ -30,7 +30,7 @@ const Footer = () => {
                 </a>
             </div>
             <div className="contact">
-                <a href="https://github.com/kyrienguyen5701/marine-button" target="_blank" rel="noreferrer">
+                <a href="https://github.com/kyrienguyen5701/ichimi-tavern#/" target="_blank" rel="noreferrer">
                     <img src={github} alt="Github logo" className="logo" />
                 </a>
             </div>
